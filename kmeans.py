@@ -8,8 +8,14 @@ if len(sys.argv) < 2:
     exit(1)
 
 infile = sys.argv[1]
-outfile = "outfile/" + os.path.basename(infile)
- 
+temp = infile.split("/")
+filename = temp[-2] + "/" + temp[-1]
+outfile = "doorsP/" + filename
+
+outdir = os.path.dirname(outfile)
+if not os.path.exists(outdir):
+    os.mkdir(outdir)
+
 def loadData(filePath):
     f = open(filePath,'rb')       
     data = []
@@ -24,13 +30,15 @@ def loadData(filePath):
             data.append([x/255.0,y/255.0,z/255.0])
     f.close()
     return np.mat(data),m,n
- 
+
 ext = 100
 color_size = 50
 marg_size = 25
-cnum = 4
+cnum = 5
 
 imgData,row,col = loadData(infile)
+print("Size of image %s: %d %d" % (infile, row, col))
+print("Write to outfile %s" % (outfile))
 km = KMeans(n_clusters=cnum).fit(imgData)
  
 label = km.labels_.reshape([row,col])
